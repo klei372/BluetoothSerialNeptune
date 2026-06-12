@@ -65,7 +65,7 @@ public class BluetoothSerialService {
      * Constructor. Prepares a new BluetoothSerial session.
      * @param handler  A Handler to send messages back to the UI Activity
      */
-    public BluetoothSerialService(Handler handler) {
+    public BluetoothSerialService(Handler handler, Context context) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
