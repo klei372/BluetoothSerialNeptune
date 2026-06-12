@@ -10,6 +10,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.Manifest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,6 +48,7 @@ public class BluetoothSerialService {
     // Member fields
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
+    private Context mContext;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
@@ -64,6 +69,7 @@ public class BluetoothSerialService {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
+        mContext = context;
     }
 
     /**
@@ -364,7 +370,10 @@ public class BluetoothSerialService {
             setName("ConnectThread" + mSocketType);
 
             // Always cancel discovery because it will slow down a connection
-            mAdapter.cancelDiscovery();
+             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+                    mContext.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
+                mAdapter.cancelDiscovery();
+            }
 
             // Make a connection to the BluetoothSocket
             try {
